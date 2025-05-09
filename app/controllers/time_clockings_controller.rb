@@ -3,7 +3,7 @@ require_relative "../../config/initializers/redis"
 
 class TimeClockingsController < ApplicationController
   include FormattedDurationHelper
-  before_action :validate_user_exists, only: [ :clock_in, :clock_out ]
+  before_action :validate_user_exists, only: [ :clock_in, :clock_out, :list_time_records_of_following_list ]
 
   def clock_in
     new_data = TimeClocking.new(user_id: params[:user_id], clock_in: Time.current)
@@ -33,6 +33,9 @@ class TimeClockingsController < ApplicationController
     if record
       record.update(clock_out: Time.current)
 
+      # Update cached feed for all followers in the background job
+      ClockingOutCacheJob.perform_async(record.id)
+
       render json: {
         message: "Clocked out successfully",
         record: record
@@ -55,29 +58,45 @@ class TimeClockingsController < ApplicationController
 
   def list_time_records_of_following_list
     user = User.find(params[:user_id])
+    this_week = Time.current.strftime("%Y-%W")
 
-    following_ids = user.followings.pluck(:id)
+    # Check if data exists in cache
+    cache_key = "user:#{user.id}:week:#{this_week}:following_list"
+    cached_data = REDIS.get(cache_key)
 
-    start_of_last_week = 1.week.ago.beginning_of_week
-    end_of_last_week = 1.week.ago.end_of_week
+    if cached_data.present?
+      # Parse the cached JSON array
+      Rails.logger.debug "-> Response with Cache Data: #{JSON.parse(cached_data)}"
+      render json: JSON.parse(cached_data), status: :ok
+    else
+      following_ids = user.followings.pluck(:id)
 
-    time_records = TimeClocking
-                    # .where(clock_in: start_of_last_week..end_of_last_week)
-                    .where(user_id: following_ids)
-                    .where.not(clock_out: nil)
-                    .select("time_clockings.*, EXTRACT(EPOCH FROM (clock_out - clock_in)) AS duration")
-                    .order("duration DESC")
+      start_of_this_week = Time.current.beginning_of_week
+      end_of_this_week = Time.current.end_of_week
 
-    formatted_records = time_records.map do |record|
-      duration_in_seconds = record.duration
-      record.attributes.merge(
-        "duration" => format_duration(duration_in_seconds)
-      )
+      time_records = TimeClocking
+                      .where(created_at: start_of_this_week..end_of_this_week)
+                      .where(user_id: following_ids)
+                      .where.not(clock_out: nil)
+                      .select("time_clockings.*, EXTRACT(EPOCH FROM (clock_out - clock_in)) AS duration")
+                      .order("duration DESC")
+
+      formatted_records = time_records.map do |record|
+        duration_in_seconds = record.duration
+        record.attributes.merge(
+          "duration" => format_duration(duration_in_seconds)
+        )
+      end
+
+    if time_records.any?
+      cache_expiration = Time.current.end_of_week.to_i - Time.current.to_i
+
+      REDIS.setex(cache_key, cache_expiration, formatted_records.to_json)
+      Rails.logger.debug "! new cache is set -> key: #{cache_key} #{formatted_records.to_json}"
     end
-
-    render json: formatted_records, status: :ok
+      render json: formatted_records.to_json, status: :ok
+    end
   end
-end
 
   private
 
@@ -89,6 +108,7 @@ end
     end
 
     unless User.exists?(user_id)
-      render json: { error: "Invalid user ID" }, status: :unprocessable_entity and return
+      render json: { error: "user ID not found" }, status: :unprocessable_entity and return
     end
   end
+end
