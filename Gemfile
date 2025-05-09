@@ -29,6 +29,12 @@ gem "kamal", require: false
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "thruster", require: false
 
+# Redis is an in-memory data structure store, used as a database, cache, message broker, and queue [https://redis.io]
+gem "redis"
+
+# Sidekiq is a job processor for Ruby [https://sidekiq.org]
+gem "sidekiq"
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
