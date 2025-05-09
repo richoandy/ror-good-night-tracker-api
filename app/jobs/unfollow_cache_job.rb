@@ -15,7 +15,7 @@ class UnfollowCacheJob
     filtered_records = records_array.reject { |record| record["user_id"] == following_id }
 
     # Store back to Redis as JSON array
-    cache_expiration = end_of_week.to_i - Time.current.to_i
-    REDIS.setex(cache_expiration, cache_key, filtered_records.to_json)
+    cache_expiration = Time.current.end_of_week.to_i - Time.current.to_i
+    REDIS.setex(cache_key, cache_expiration, filtered_records.to_json)
   end
 end

@@ -16,7 +16,7 @@ class FollowingCacheJob
 
     time_records = TimeClocking
                     .where(user_id: following_id)
-                    .where(clock_in: start_of_week..end_of_week)
+                    .where(created_at: start_of_week..end_of_week)
                     .where.not(clock_out: nil)
                     .select("time_clockings.*, EXTRACT(EPOCH FROM (clock_out - clock_in)) AS duration")
                     .order("duration DESC")
@@ -28,7 +28,7 @@ class FollowingCacheJob
         user_id: record.user_id,
         clock_in: record.clock_in,
         clock_out: record.clock_out,
-        duration: FormattedDurationHelper.format_duration(record.duration)
+        duration: format_duration(record.duration)
       }
     end
 
@@ -39,7 +39,7 @@ class FollowingCacheJob
     sorted_data = all_records.sort_by { |record| record["duration"].to_f }.reverse
 
     # Store back to Redis as JSON array
-    cache_expiration = end_of_week.to_i - Time.current.to_i
+    cache_expiration = Time.current.end_of_week.to_i - Time.current.to_i
     REDIS.setex(cache_key, cache_expiration, sorted_data.to_json)
   end
 end
