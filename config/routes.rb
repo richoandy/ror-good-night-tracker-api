@@ -16,4 +16,13 @@ Rails.application.routes.draw do
   end
 
   resources :follows, only: [ :create, :destroy ]
+
+  resources :time_clockings, only: [] do
+    collection do
+      post :clock_in
+      patch :clock_out
+    end
+  end
+
+  get "/users/:user_id/time_records_of_following_list", to: "time_clockings#list_time_records_of_following_list"
 end
