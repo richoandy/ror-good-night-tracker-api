@@ -17,18 +17,21 @@ default: &default
   encoding: unicode
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-
+  pool: 5
+  username: app_dev
+  password: app_dev
+  host: localhost
+  port: 5432
 
 development:
   <<: *default
-  database: good_night_ror_api_development
+  database: postgres
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
   # When left blank, PostgreSQL will use the default role. This is
   # the same name as the operating system user running Rails.
-  #username: good_night_ror_api
+  #username: good_night
 
   # The password associated with the PostgreSQL role (username).
   #password:
@@ -56,7 +59,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: good_night_ror_api_test
+  database: postgres
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -81,18 +84,18 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: good_night_ror_api_production
-    username: good_night_ror_api
-    password: <%= ENV["GOOD_NIGHT_ROR_API_DATABASE_PASSWORD"] %>
+    database: good_night_production
+    username: good_night
+    password: <%= ENV["GOOD_NIGHT_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
-    database: good_night_ror_api_production_cache
+    database: good_night_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: good_night_ror_api_production_queue
+    database: good_night_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: good_night_ror_api_production_cable
+    database: good_night_production_cable
     migrations_paths: db/cable_migrate
