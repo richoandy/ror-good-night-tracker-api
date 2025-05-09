@@ -7,4 +7,13 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  resources :users, only: [ :create ] do
+    member do
+      get :followers
+      get :following
+    end
+  end
+
+  resources :follows, only: [ :create, :destroy ]
 end
