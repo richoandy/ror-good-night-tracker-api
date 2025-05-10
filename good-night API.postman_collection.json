@@ -1,0 +1,206 @@
+{
+	"info": {
+		"_postman_id": "10443fa9-2a9f-4e82-b00f-d88d9d19b670",
+		"name": "good-night API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4877618",
+		"_collection_link": "https://martian-desert-140865.postman.co/workspace/Team-Workspace~987c5805-b5bc-4c8a-814b-dcbf6f34e5bb/collection/4877618-10443fa9-2a9f-4e82-b00f-d88d9d19b670?action=share&source=collection_link&creator=4877618"
+	},
+	"item": [
+		{
+			"name": "create users",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"user test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/users",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Follow a user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"follower_id\": 16,\n    \"following_id\": 17\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/follows",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"follows"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List followers",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "List Following",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/users/1/following",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"1",
+						"following"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unfollow a user",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/follows/4?following_id=5",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"follows",
+						"4"
+					],
+					"query": [
+						{
+							"key": "following_id",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "list time records of following list",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/users/8/time_records_of_following_list",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"8",
+						"time_records_of_following_list"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "clock in",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 15\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/time_clockings/clock_in",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"time_clockings",
+						"clock_in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "clock out",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": 17\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/time_clockings/clock_out",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"time_clockings",
+						"clock_out"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
