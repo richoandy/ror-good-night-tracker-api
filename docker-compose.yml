@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  my-postgres:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: good_night
+
+  my-test-postgres:
+    image: postgres:15
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: good_night_test
+
+  my-redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
