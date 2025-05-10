@@ -15,16 +15,18 @@ class ClockingOutCacheJob
       cache_key = "user:#{follower_id}:week:#{this_week}:following_list"
 
       # Get existing data from cache
-      cached_data = JSON.parse(REDIS.get(cache_key))
+      cached_data = JSON.parse(REDIS.get(cache_key) || "[]")
 
       # Format the new data
-      duration = time_clocking.clock_out - time_clocking.clock_in
+      duration_in_seconds = (time_clocking.clock_out - time_clocking.clock_in).to_f
+
       new_data = {
         id: time_clocking.id,
         user_id: time_clocking.user_id,
         clock_in: time_clocking.clock_in,
         clock_out: time_clocking.clock_out,
-        duration: FormattedDurationHelper.format_duration(duration)
+        duration: duration_in_seconds,
+        duration_label: format_duration(duration_in_seconds)
       }
 
       # Add new data to array
@@ -34,7 +36,7 @@ class ClockingOutCacheJob
       sorted_data = cached_data.sort_by { |record| record["duration"].to_f }.reverse
 
       # Store back to Redis
-      cache_expiration = end_of_week.to_i - Time.current.to_i
+      cache_expiration = Time.current.end_of_week.to_i - Time.current.to_i
       REDIS.setex(cache_key, cache_expiration, sorted_data.to_json)
     end
   end

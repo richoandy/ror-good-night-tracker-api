@@ -84,7 +84,7 @@ class TimeClockingsController < ApplicationController
       formatted_records = time_records.map do |record|
         duration_in_seconds = record.duration
         record.attributes.merge(
-          "duration" => format_duration(duration_in_seconds)
+          "duration_label" => format_duration(duration_in_seconds)
         )
       end
 
