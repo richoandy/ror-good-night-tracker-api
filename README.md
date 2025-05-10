@@ -155,3 +155,8 @@ When a user clocks in: creates a new TimeClocking record with:
     - Removes all records belonging to the unfollowed user
     - Maintains the order of remaining records
     - Saves filtered records back to Redis
+
+### unit tests:
+```
+ruby test/unit/formatted_duration_helper_test.rb
+```
