@@ -21,11 +21,11 @@ default: &default
   username: pguser
   password: root
   host: localhost
-  port: 5432
 
 development:
   <<: *default
-  database: postgres
+  database: good_night
+  port: 5432
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.
@@ -58,9 +58,10 @@ development:
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: good_night_test
-  port: 5433
+  adapter: sqlite3
+  database: ":memory:"
+  pool: 5
+  timeout: 5000
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is

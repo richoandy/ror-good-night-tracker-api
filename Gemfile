@@ -50,4 +50,7 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Use SQLite for testing
+  gem "sqlite3", "~> 2.1"
 end
