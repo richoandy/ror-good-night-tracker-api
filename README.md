@@ -73,8 +73,7 @@ docker-compose up
 ```
 
 This will start:
-- main PostgreSQL
-- test PostgreSQL
+- PostgreSQL
 - Redis
 
 2. Migrate the database:
